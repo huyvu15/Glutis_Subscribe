@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscribe to Glutis</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="images/icon-newsSubscribe.png">
+</head>
+<body>
+    <div class="subscribe-container">
+        <div class="subscribe-content">
+            <h1>Stay Updated with Glutis</h1>
+            <p class="subtitle">Join our community and get the latest insights on technology, data, and cloud delivered straight to your inbox.</p>
+            
+            <form name="submit-to-google-sheet">
+                <div class="input-group">
+                    <input type="email" name="email" placeholder="Enter your email address" required>
+
+                    <button type="submit">Subscribe</button>
+                </div>
+            </form>
+
+            <p class="disclaimer">We respect your privacy. Unsubscribe at any time.</p>
+            <span id="msg" class="message"></span>
+        </div>
+    </div>
+
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxQ903pmobfD_Ylr_lCI0_s7J-0IE50SfDr3vpym8dW1BTYPmbiVThs-kBlPC6hw8odwA/exec';
+        const form = document.forms['submit-to-google-sheet'];
+        const messageDiv = document.getElementById('msg');
+        const submitBtn = form.querySelector('button[type="submit"]');
+
+        // Thêm function showMessage
+        function showMessage(text, type) {
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            submitBtn.textContent = 'Submitting...';
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch(scriptURL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Thêm mode no-cors
+                    body: new FormData(form)
+                });
+
+                // Vì mode là no-cors, chúng ta không thể kiểm tra response.ok
+                showMessage('🎉 Success! Check your inbox for confirmation.', 'success');
+                form.reset();
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('⚠️ Oops! Please try again later.', 'error');
+            } finally {
+                submitBtn.textContent = 'Subscribe';
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
